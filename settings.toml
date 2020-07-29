@@ -1,0 +1,6 @@
+port="8000"
+cacheFolder="/tmp/cache_imageResizer"
+inputFolder="/var/www/images/"
+maxCacheSize="500MB"
+logFile="log.log"
+preCache=true
