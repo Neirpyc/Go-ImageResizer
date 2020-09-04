@@ -44,10 +44,10 @@ func getContent(url string, header http.Header) ([]byte, error, int) {
 			}
 			cache.Insert(fInfo)
 			return content, nil, http.StatusOK
-		}else{
+		} else {
 			return nil, err, code
 		}
-	}else {
+	} else {
 		return nil, err, http.StatusBadRequest
 	}
 }

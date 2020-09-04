@@ -53,7 +53,7 @@ func parseReqUrl(url string) (Request, error) {
 		case "big":
 			r.size = sizeBig
 		default:
-			return r, errors.New("Unvalid size:"+ groups[2])
+			return r, errors.New("Unvalid size:" + groups[2])
 		}
 
 		//file
@@ -65,13 +65,13 @@ func parseReqUrl(url string) (Request, error) {
 	return r, nil
 }
 
-func rewriteUrlWithWebp(url string, header http.Header) string{
+func rewriteUrlWithWebp(url string, header http.Header) string {
 	strSplit := strings.Split(url, ".")
 	ext := strSplit[len(strSplit)-1]
-	if acceptsWebp(ext, header){
+	if acceptsWebp(ext, header) {
 		strSplit[len(strSplit)-1] = "webp"
 		return strings.Join(strSplit, ".")
-	}else{
+	} else {
 		strSplit[len(strSplit)-1] = "jpg"
 		return strings.Join(strSplit, ".")
 	}
@@ -86,7 +86,8 @@ func acceptsWebp(ext string, header http.Header) bool {
 					return true
 				}
 			}
+			return false
 		}
 	}
-	return false
+	return true
 }
