@@ -8,28 +8,28 @@ import (
 	"strings"
 )
 
-func fetchFromCache(url string) ([]byte, string, error){
+func fetchFromCache(url string) ([]byte, string, error) {
 	hash := sha512Str(url)
 
 	f, err := os.Open(settings.CacheFolder + "/" + hash)
 	if err == nil {
 		cache.Update(hash)
 		content, err := ioutil.ReadAll(f)
-			return content, hash, err
+		return content, hash, err
 	}
 	return nil, hash, err
 }
 
-func preCache(){
+func preCache() {
 	err := filepath.Walk(settings.InputFolder,
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
-			if !info.IsDir(){
+			if !info.IsDir() {
 				urls := generateUrlsForFile(strings.TrimRight(strings.TrimLeft(path, settings.InputFolder+"/"), ".jpg"))
-				for _, url := range(urls){
-					if _, urlHash, err := fetchFromCache(url); err != nil{
+				for _, url := range urls {
+					if _, urlHash, err := fetchFromCache(url); err != nil {
 						if req, err := parseReqUrl(url); err == nil {
 							if content, err, _ := getImage(req); err == nil {
 								f, err := os.Create(settings.CacheFolder + "/" + urlHash)
@@ -46,10 +46,10 @@ func preCache(){
 									return err
 								}
 								cache.Insert(fInfo)
-							}else{
+							} else {
 								return err
 							}
-						}else {
+						} else {
 							return err
 						}
 					}
@@ -62,18 +62,18 @@ func preCache(){
 	}
 }
 
-func generateUrlsForFile(file string)[]string{
+func generateUrlsForFile(file string) []string {
 	exts := []string{".jpg", ".webp"}
 	lods := []string{"1", "2", "3"}
 	sizes := []string{"small", "medium", "big"}
 	var urls []string
-	for _, ext := range(exts){
-		for _, lod := range(lods){
-			if lod == "3"{
-				for _, size := range(sizes){
+	for _, ext := range exts {
+		for _, lod := range lods {
+			if lod == "3" {
+				for _, size := range sizes {
 					urls = append(urls, generateUrl(file, lod, size, ext))
 				}
-			}else{
+			} else {
 				urls = append(urls, generateUrl(file, lod, "", ext))
 			}
 		}
@@ -81,9 +81,9 @@ func generateUrlsForFile(file string)[]string{
 	return urls
 }
 
-func generateUrl(file string, lod string, size string, ext string) string{
-	if lod == "3"{
-		return "/images/lod/3/"+size+"/"+file+ext
+func generateUrl(file string, lod string, size string, ext string) string {
+	if lod == "3" {
+		return "/images/lod/3/" + size + "/" + file + ext
 	}
-	return "/images/lod/"+lod+"/"+file+ext
+	return "/images/lod/" + lod + "/" + file + ext
 }

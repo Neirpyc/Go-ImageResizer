@@ -10,9 +10,9 @@ import (
 )
 
 type ByATime struct {
-	Files []os.FileInfo
-	Mutex sync.RWMutex
-	Size  int64
+	Files     []os.FileInfo
+	Mutex     *sync.RWMutex
+	Size      int64
 	Directory string
 }
 
@@ -36,9 +36,9 @@ func NewByATimeFromFileList(list []os.FileInfo, directory string) ByATime {
 		size += f.Size()
 	}
 	byATime := ByATime{
-		Files: list,
-		Mutex: sync.RWMutex{},
-		Size:  size,
+		Files:     list,
+		Mutex:     new(sync.RWMutex),
+		Size:      size,
 		Directory: directory,
 	}
 	byATime.Sort()
@@ -50,30 +50,30 @@ func (f ByATime) Sort() {
 	sort.Sort(f)
 }
 
-func (f ByATime) ValidateSize(){
+func (f ByATime) ValidateSize() {
 	f.Mutex.RLock()
-	if f.Size > settings.MaxCacheSize{
+	if f.Size > settings.MaxCacheSize {
 		f.Mutex.RUnlock()
 
 		f.Mutex.Lock()
-		for f.Size > settings.MaxCacheSize{
+		for f.Size > settings.MaxCacheSize {
 			f.Size -= f.Files[0].Size()
-			if err := os.Remove(f.Directory + "/" + f.Files[0].Name()); err != nil{
+			if err := os.Remove(f.Directory + "/" + f.Files[0].Name()); err != nil {
 				log.Println(err.Error())
 			}
 			f.Files = f.Files[1:]
 		}
 		f.Mutex.Unlock()
-	}else{
+	} else {
 		f.Mutex.RUnlock()
 	}
 }
 
-func (f ByATime) Find(name string) int{
+func (f ByATime) Find(name string) int {
 	f.Mutex.RLock()
 	defer f.Mutex.RUnlock()
-	for i := 0; i < f.Len(); i++{
-		if f.Files[i].Name() == name{
+	for i := 0; i < f.Len(); i++ {
+		if f.Files[i].Name() == name {
 			return i
 		}
 	}
@@ -97,7 +97,7 @@ func (f ByATime) Insert(info os.FileInfo) {
 
 func (f ByATime) Update(name string) {
 	i := f.Find(name)
-	if i >= f.Len()-1 || i < 0{
+	if i >= f.Len()-1 || i < 0 {
 		return
 	}
 	for j := i; j+1 < f.Len()-1; j++ {
