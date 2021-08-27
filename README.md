@@ -75,4 +75,4 @@ Here are a few request examples:
 A live demo can be found [here](https://beggiora.neirpyc.ovh/master/gallery).
 
 # license
-The auth package is licensed under the GNU GPL license. Please see the LICENSE file for details.
+This program is licensed under the GNU GPL v3 license. Please see the LICENSE file for details.
